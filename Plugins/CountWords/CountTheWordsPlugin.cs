@@ -35,5 +35,6 @@ namespace CountTheWords
                 return new PluginOutput("The number of words is " + numberOfWords, numberOfWords.ToString());
             }
         }
+
     }
 }
