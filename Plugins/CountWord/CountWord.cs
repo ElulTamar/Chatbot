@@ -1,40 +1,39 @@
-﻿using BasePlugin;
+﻿using System;
+using System.Linq;
+using System.Text.Json;
 using BasePlugin.Interfaces;
 using BasePlugin.Records;
-using System;
-using System.Collections.Generic;
 
-namespace CountWord
+
+
+namespace CountTheWords
 {
-    public class CountWordPlugin : IPlugin
+
+    public class CountTheWordsPlugin : IPlugin
     {
-        public static string _Id = "countword";
+
+        public static string _Id = "count-words";
         public string Id => _Id;
+
 
         public PluginOutput Execute(PluginInput input)
         {
-            var wordCount = new int();
-            var index = new int();
-            wordCount = 0;
-            index = 0;
-
-            var str = input.Message.Trim();
-
-            if (string.IsNullOrWhiteSpace(str))
+            if (input.Message == "")
             {
-                return new PluginOutput("CountWord. Enter any text after the digit 6 to Count the number of words in the text");
+                input.Callbacks.StartSession();
+                return new PluginOutput("Count words started. Enter 'Exit' to stop.");
             }
-            while (index < str.Length && char.IsWhiteSpace(str[index]))
-                index++;
-            while (index < str.Length)
+            else if (input.Message.ToLower() == "exit")
             {
-                while (index < str.Length && !char.IsWhiteSpace(str[index]))
-                    index++;
-                wordCount++;
-                while (index < str.Length && char.IsWhiteSpace(str[index]))
-                    index++;
+                input.Callbacks.EndSession();
+                return new PluginOutput("Count words stopped.");
             }
-            return new PluginOutput($"The number of wrods in the text is: {wordCount} \r\nEnter new any text after the digit 6 to Count the number of words in the text.");
+            else
+            {
+                var numberOfWords = input.Message.Split(' ').Where(s => !string.IsNullOrEmpty(s)).Count();
+
+                return new PluginOutput("The number of words is " + numberOfWords, numberOfWords.ToString());
+            }
         }
     }
 }
